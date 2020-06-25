@@ -1,0 +1,26 @@
+{
+  "name": "portfoliogenerator",
+  "version": "1.0.0",
+  "description": "For Module 9",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theodorebutts/protfolioGenerator.git"
+  },
+  "keywords": [
+    "class",
+    "project"
+  ],
+  "author": "TBUTTS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theodorebutts/protfolioGenerator/issues"
+  },
+  "homepage": "https://github.com/theodorebutts/protfolioGenerator#readme",
+  "dependencies": {
+    "inquirer": "^7.2.0"
+  }
+}
