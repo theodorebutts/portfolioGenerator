@@ -1,4 +1,7 @@
 const inquirer = require('inquirer')
+const fs = require('fs')
+const generatePage = require('./src/pageTemplate.js')
+
 
 const promptUser = () => {
     return inquirer
@@ -31,7 +34,7 @@ const promptUser = () => {
             },
             {
                 type: 'confirm',
-                name: 'aboutConfirm',
+                name: 'confirmAbout',
                 message: 'Would you like to enter some information about yourself for an "About" section?',
                 default: true
             },
@@ -42,21 +45,13 @@ const promptUser = () => {
                 when: ({ confirmAbout }) => confirmAbout
             }
         ])
-        .then(projectData => {
-            protfolioData.projects.push(projectData)
-            if (projectData.comfirmAddProject) {
-                return promptProject(protfolioData)
-            } else {
-                return protfolioData
-            }
-        })
 }
 
 
-const promptProject = protfolioData => {
-    protfolioData.projects = []
-    if (!protfolioData.projects) {
-        protfolioData.projects = []
+const promptProject = portfolioData => {
+    portfolioData.projects = []
+    if (!portfolioData.projects) {
+        portfolioData.projects = []
     }
 
     console.log(`
@@ -64,78 +59,89 @@ const promptProject = protfolioData => {
         Add a New Project
         =================
         `)
-        return inquirer.prompt([
-            {
-                type: 'input',
-                name: 'name',
-                message: 'What is the name of your project?',
-                validate: projectNameInput => {
-                    if (projectNameInput) {
-                        return true
-                    } else {
-                        console.log('Please enter a project name.')
-                        return false
-                    }
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What is the name of your project?',
+            validate: projectNameInput => {
+                if (projectNameInput) {
+                    return true
+                } else {
+                    console.log('Please enter a project name.')
+                    return false
                 }
-            },
-            {
-                type: 'input',
-                name: 'description',
-                message: 'Provide a description for the project (Required)',
-                validate: descriptionInput => {
-                    if (descriptionInput) {
-                        return true
-                    } else {
-                        console.log('Please enter project description.')
-                        return false
-                    }
-                }
-            },
-            {
-                type: 'checkbox',
-                name: 'languages',
-                message: 'What did you create this project with? (Check all that apply',
-                choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
-            },
-            {
-                type: 'input',
-                name: 'link',
-                message: 'Enter the GitHub link to your project. (Required)',
-                validate: linkInput => {
-                    if (linkInput) {
-                        return true
-                    } else {
-                        console.log('Please enter a GitHub link.')
-                        return false
-                    }
-                }
-            },
-            {
-                type: 'confirm',
-                name: 'feature',
-                message: 'Would you liek to feature this project?',
-                default: false
-            },
-            {
-                type: 'confirm',
-                name: 'confirmAddProject',
-                message: 'Would you like to enter anoter project?',
-                default: false
             }
-        ])
+        },
+        {
+            type: 'input',
+            name: 'description',
+            message: 'Provide a description for the project (Required)',
+            validate: descriptionInput => {
+                if (descriptionInput) {
+                    return true
+                } else {
+                    console.log('Please enter project description.')
+                    return false
+                }
+            }
+        },
+        {
+            type: 'checkbox',
+            name: 'languages',
+            message: 'What did you create this project with? (Check all that apply',
+            choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
+        },
+        {
+            type: 'input',
+            name: 'link',
+            message: 'Enter the GitHub link to your project. (Required)',
+            validate: linkInput => {
+                if (linkInput) {
+                    return true
+                } else {
+                    console.log('Please enter a GitHub link.')
+                    return false
+                }
+            }
+        },
+        {
+            type: 'confirm',
+            name: 'feature',
+            message: 'Would you like to feature this project?',
+            default: false
+        },
+        {
+            type: 'confirm',
+            name: 'confirmAddProject',
+            message: 'Would you like to enter anoter project?',
+            default: false
+        }
+    ])
+        .then(projectData => {
+            portfolioData.projects.push(projectData)
+            if (projectData.comfirmAddProject) {
+                return promptProject(portfolioData)
+            } else {
+                return portfolioData
+            }
+        })
 }
 
 promptUser()
     .then(promptProject)
-    .then(protfolioData => {
-        console.log(protfolioData)
+    .then(portfolioData => {
+        const pageHTML = generatePage(portfolioData)
+
+        fs.writeFile('./index.html', pageHTML, err => {
+            if (err) throw new Error(err)
+
+        })
     })
 
 
 // Save for Reference
 // const fs = require('fs') 
-
-// const generatePage = require('./src/pageTemplate.js')
 
 // const profileDataArgs = process.argv.slice(2)
 
