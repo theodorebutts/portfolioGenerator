@@ -1,6 +1,7 @@
 const inquirer = require('inquirer')
 const fs = require('fs')
 const generatePage = require('./src/pageTemplate.js')
+const pageTemplate = require('./src/pageTemplate.js')
 
 
 const promptUser = () => {
@@ -120,7 +121,7 @@ const promptProject = portfolioData => {
     ])
         .then(projectData => {
             portfolioData.projects.push(projectData)
-            if (projectData.comfirmAddProject) {
+            if (projectData.confirmAddProject) {
                 return promptProject(portfolioData)
             } else {
                 return portfolioData
